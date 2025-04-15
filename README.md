@@ -1,6 +1,6 @@
 # Segment4Solar
 
-Segment4Solar is a project focusing on the analysis and segmentation of facade imagery for solar applications. 
+Segment4Solar (v0.1) is a project focusing on the analysis and segmentation of facade imagery for solar applications. 
 
 Segment4Solar leverages two APIs to:
 - **Detect available areas on facades,** where solar panels can potentially be applied onto.
