@@ -1,0 +1,2 @@
+Install model ckpts here and place it in this folder. In the demo vit_l is used:
+https://github.com/facebookresearch/segment-anything?tab=readme-ov-file#model-checkpoints
