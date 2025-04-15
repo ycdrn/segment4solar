@@ -14,4 +14,4 @@ By transforming raw facade imagery into actionable data, Segment4Solar aids in t
 
 ## Reference
 
-For a detailed explanation of the improvements in the estimated energy yield with the methodologies used in our analysis tool, please refer to our conference paper: 
+For a detailed explanation of the improvements in the estimated energy yield with the methodologies used in our analysis tool, please refer to our [conference aper]](https://iopscience.iop.org/article/10.1088/1742-6596/2600/4/042005/pdf)
