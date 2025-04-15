@@ -2,11 +2,13 @@
 
 Segment4Solar (v0.1) is a project focusing on the analysis and segmentation of facade imagery for solar applications. 
 
-Segment4Solar leverages two APIs to:
-- **Detect available areas on facades,** where solar panels can potentially be applied onto.
-- **Estimate monthly and annual energy generation** to understand how much of your demand can be met by the solar panels.
+## Instant BIPV Design using Street View Images
 
-By transforming raw facade imagery into actionable data, Segment4Solar aids in the planning and management of solar installations in urban environments.
+Building-Integrated Photovoltaic (BIPV) retrofits can help transform buildings into energy producers, but accurate, facade-specific solar assessments are essential. Building facades are diverse and complex, with windows, balconies, and other features complicating solar panel installation. Existing approaches to estimating facade solar potential often oversimplify these details, leading to inaccurate overestimates. Segment for Solar Facades (S4S) addresses this by offering a segmentation approach to evaluate solar potential in detail.
+
+S4S combines deep learning-based image segmentation with solar irradiance data to assess the solar potential of building facades. Using the Segment Anything model, S4S performs segmentation on facade images to identify suitable areas for solar panel installation, accounting for windows, doors, and other architectural features. On selected facade surfaces, BIPVs are considered based on user-defined PV technology. S4S then integrates irradiance data from PVGIS to calculate the annual energy potential and monthly energy yields for the facade, considering its unique details.
+
+S4S is currently under development. Future enhancements will further improve energy yield estimation by incorporating shading factors through image analysis and allowing additional user input to refine segmentation results. If you’re interested in learning more or have any ideas, feel free to reach out!
 
 ## Demo
 
