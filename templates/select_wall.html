@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Wall Mask - Facade Analysis Tool</title>
+    <!-- Include Bootstrap CSS from a CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #ffffff;
+            --secondary-color: #f0f0f0;
+            --accent-color: #cccccc;
+            --text-color: #333333;
+            --button-color: #555555;
+            --button-hover: #777777;
+            --highlight-color: #6aff00; /* Bright green for selection */
+        }
+
+        body {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--primary-color);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #000000;
+            margin-bottom: 30px;
+            font-size: 2em;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .svg-container {
+            background-color: var(--secondary-color);
+            padding: 20px;
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .svg-container svg {
+            width: 100%;
+            height: auto;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="number"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            font-size: 1em;
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--button-color);
+            box-shadow: 0 0 5px rgba(85, 85, 85, 0.5);
+        }
+
+        .selected * {
+            stroke: var(--highlight-color) !important;
+            stroke-width: 2 !important;
+        }
+
+        .btn-submit {
+            background-color: var(--button-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1em;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--button-hover);
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .btn-submit {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Select the Wall Surface</h1>
+        <div class="svg-container" id="segmented-image">
+            <!-- Embed the SVG image directly -->
+            {{ svg_content | safe }}
+        </div>
+
+        <!-- Form to collect facade area -->
+        <form action="{{ url_for('process_selection', filename=original_image) }}" method="post">
+            <input type="hidden" name="selected_mask_id" id="selected-mask-id" required>
+            
+            <div class="form-group">
+                <label for="facade-area">Enter the facade area (in square meters):</label>
+                <input type="number" name="facade_area" id="facade-area" step="0.01" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="orientation">Select the orientation of the wall:</label>
+                <select name="orientation" id="orientation" required>
+                    <option value="" disabled selected>Select orientation</option>
+                    <option value="north">North</option>
+                    <option value="northeast">Northeast</option>
+                    <option value="east">East</option>
+                    <option value="southeast">Southeast</option>
+                    <option value="south">South</option>
+                    <option value="southwest">Southwest</option>
+                    <option value="west">West</option>
+                    <option value="northwest">Northwest</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="pv_technology">Select PV technology:</label>
+                <select name="pv_technology" id="pv_technology" required>
+                    <option value="" disabled selected>Select PV technology</option>
+                    <option value="monocrystalline">Monocrystalline Silicon</option>
+                    <option value="polycrystalline">Polycrystalline Silicon</option>
+                    <option value="thin_film">Thin Film</option>
+                    <!-- Add more options as needed -->
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="location">Enter the city:</label>
+                <input type="text" name="location" id="location" required>
+            </div>
+            
+            <button type="submit" id="submit-button" class="btn-submit" disabled>Submit</button>
+        </form>    
+    </div>
+    <!-- Include Bootstrap JS and dependencies (optional for future use) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Include JavaScript to handle mask selection -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const svg = document.querySelector('#segmented-image svg');
+            if (!svg) {
+                console.error('SVG element not found.');
+                return;
+            }
+            const selectedMaskInput = document.getElementById('selected-mask-id');
+            const submitButton = document.getElementById('submit-button');
+
+            // Use event delegation to handle clicks on mask elements
+            svg.addEventListener('click', (event) => {
+                let target = event.target;
+
+                // Traverse up the DOM tree to find the <g> element with an 'id' attribute
+                while (target && target !== svg && !target.hasAttribute('id')) {
+                    target = target.parentNode;
+                }
+
+                if (target && target !== svg && target.tagName.toLowerCase() === 'g') {
+                    // Remove 'selected' class from all masks
+                    svg.querySelectorAll('g').forEach(g => {
+                        g.classList.remove('selected');
+                    });
+                    // Add 'selected' class to the clicked mask group
+                    target.classList.add('selected');
+                    // Extract the mask ID from the 'id' attribute
+                    const maskId = target.getAttribute('id').replace('mask_', '');
+                    selectedMaskInput.value = maskId;
+                    console.log('Selected mask ID:', maskId);
+                    // Enable the submit button
+                    submitButton.disabled = false;
+                }
+            });
+        });
+    </script>            
+</body>
+</html>

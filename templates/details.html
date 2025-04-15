@@ -1,0 +1,245 @@
+<!-- templates/details.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculation Details - Facade Analysis Tool</title>
+    <!-- Include Bootstrap CSS from a CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <!-- Include MathJax for LaTeX rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f0f0f0;
+            color: #333333;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: auto;
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.75em;
+            margin-top: 30px;
+        }
+
+        p {
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        .conference-paper, .contact-info, .calculation-method, .fixed-values {
+            margin-top: 30px;
+        }
+
+        .btn-back {
+            background-color: var(--button-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+
+        .btn-back:hover {
+            background-color: #777777;
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        
+        /* Table Styling */
+        .fixed-values table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .fixed-values th, .fixed-values td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .fixed-values th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+                /* References Section Styling */
+                .references {
+            margin-top: 30px;
+        }
+
+        .references h2 {
+            text-align: left;
+        }
+
+        .references ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .references li {
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                max-width: 700px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            .btn-back {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 15px;
+                max-width: 100%;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 1.75em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculation Details</h1>
+
+        <!-- Calculation Method Section -->
+        <div class="calculation-method">
+            <h2>Calculation Method</h2>
+            <p>
+                The potential annual energy yield (\( E_y \)) of a photovoltaic (PV) system installed on a building facade is calculated using the following equation:
+            </p>
+            <p>
+                \[
+                E_y = A \times H \times \eta \times (1 - L)
+                \]
+            </p>
+            <p>
+                Where:
+            </p>
+            <ul>
+                <li><strong>A:</strong> Available facade area for PV installation (m²)</li>
+                <li><strong>H:</strong> Annual global irradiance on the facade (kWh/m²/year)</li>
+                <li><strong>\(\eta\):</strong> System efficiency based on PV technology (%)</li>
+                <li><strong>L:</strong> System losses (%)</li>
+            </ul>
+            <p>
+                This equation estimates the total annual energy production expected from the photovoltaic installation by considering the available installation area estimated with the help of Segment Anything <a href="https://arxiv.org/abs/2304.02643" target="_blank">[1]</a>, local irradiance data retrieved from PVGIS <a href="https://ec.europa.eu/jrc/en/pvgis" target="_blank">[2]</a>, system efficiency, and inherent system losses. The following are considered constant in the calculations: 
+            </p>
+        </div>
+        
+
+        <!-- Fixed Values Section -->
+        <div class="fixed-values">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Value</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>System Losses (\( L \))</td>
+                        <td>0.14</td>
+                        <td>Accounts for 14% energy losses due to factors like shading, temperature effects, inverter efficiency, and wiring losses.</td>
+                    </tr>
+                    <tr>
+                        <td>Efficiency (\( \eta \)) - Monocrystalline</td>
+                        <td>0.20</td>
+                        <td>Represents the efficiency of monocrystalline PV modules in converting sunlight to electricity.</td>
+                    </tr>
+                    <tr>
+                        <td>Efficiency (\( \eta \)) - Polycrystalline</td>
+                        <td>0.15</td>
+                        <td>Represents the efficiency of polycrystalline PV modules in converting sunlight to electricity.</td>
+                    </tr>
+                    <tr>
+                        <td>Efficiency (\( \eta \)) - Thin Film</td>
+                        <td>0.10</td>
+                        <td>Represents the efficiency of thin-film PV modules in converting sunlight to electricity.</td>
+                    </tr>
+                    <!-- Add more fixed values as needed -->
+                </tbody>
+            </table>
+            
+        <p class="conference-paper">
+            For a detailed explanation of the improvements in the estimated energy yield with the methodologies used in our analysis tool, please refer to our conference paper <a href="https://doi.org/10.1088/1742-6596/2600/4/042005" target="_blank">[3]</a>.
+        </p>
+
+        <p class="contact-info">
+            If you have any questions, feedback, or require further assistance, feel free to reach out to the corresponding author here:
+        </p>
+        <p>
+            <strong>Email:</strong> duran@arch.ethz.ch<br>
+            <strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/ayca-duran-2b8630141/" target="_blank">linkedin.com/in/yourprofile</a>
+        </p>
+
+        <!-- References Section -->
+        <div class="references">
+            <h2>References</h2>
+            <ul>
+                <li>
+                    <strong>[1]</strong> Kirillov, A., Mintun, E., Bassok, S., & others. (2023). Segment Anything. <em>arXiv preprint arXiv:2304.02643</em>. Retrieved from <a href="https://arxiv.org/abs/2304.02643" target="_blank">https://arxiv.org/abs/2304.02643</a>
+                </li>
+                <li>
+                    <strong>[2]</strong> Photovoltaic Geographical Information System (PVGIS). (n.d.). Retrieved from <a href="https://ec.europa.eu/jrc/en/pvgis" target="_blank">https://ec.europa.eu/jrc/en/pvgis</a>
+                </li>
+                <li>
+                    <strong>[3]</strong> Duran, A., Waibel, C., & Schlueter, A. (2023). Estimating surface utilization factors for BIPV applications using pix2pix on street captured façade images. <em>Journal of Physics Conference Series</em>, <strong>2600</strong>(4), 042005. <a href="https://doi.org/10.1088/1742-6596/2600/4/042005" target="_blank">https://doi.org/10.1088/1742-6596/2600/4/042005</a>
+                </li>
+            </ul>
+        </div>
+
+        <a href="#" onclick="window.history.back();" class="btn-back">← Back to Results</a>
+
+    </div>
+
+
+    <!-- Include Bootstrap JS and dependencies (optional for future use) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

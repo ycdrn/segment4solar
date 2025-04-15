@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Results - Facade Analysis Tool</title>
+    <!-- Include Bootstrap CSS from a CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #ffffff;
+            --secondary-color: #f0f0f0;
+            --accent-color: #cccccc;
+            --text-color: #333333;
+            --button-color: #555555;
+            --button-hover: #777777;
+            --highlight-color: #6aff00; /* Bright green for selection */
+        }
+
+        body {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--primary-color);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1, h2, h3 {
+            color: #000000;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.75em;
+            margin-top: 30px;
+        }
+
+        h3 {
+            font-size: 1.25em;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        p {
+            font-size: 1em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .result-section {
+            background-color: var(--secondary-color);
+            padding: 20px;
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .image-container {
+            /* Removed display: flex and other styles to utilize Bootstrap's grid */
+            margin-bottom: 20px;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 10px;
+        }
+
+        .btn-home {
+            background-color: var(--button-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+
+        .btn-home:hover {
+            background-color: var(--button-hover);
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px;
+                max-width: 700px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            h3 {
+                font-size: 1.1em;
+                text-align: center;
+            }
+
+            .btn-home {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px;
+                max-width: 100%;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 1.75em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            h3 {
+                font-size: 1em;
+                text-align: center;
+            }
+
+            .btn-home {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+        }
+
+        /* Uniform table column widths for data-table */
+        .data-table {
+            table-layout: fixed; /* Ensures fixed table layout */
+            width: 100%;         /* Makes the table span the full width of its container */
+        }
+
+        .data-table th, .data-table td {
+            overflow: hidden;        /* Prevents content from overflowing */
+            text-overflow: ellipsis; /* Adds ellipsis (...) for overflowing text */
+            white-space: nowrap;     /* Prevents text from wrapping to the next line */
+        }
+
+        /* Define specific widths for each column */
+        /* Assuming all tables have two columns: Parameter and Value */
+        .data-table th:first-child, 
+        .data-table td:first-child {
+            width: 40%; /* First column (Parameter) takes up 30% of the table width */
+        }
+
+        .data-table th:nth-child(2), 
+        .data-table td:nth-child(2) {
+            width: 60%; /* Second column (Value) takes up 70% of the table width */
+        }
+
+        /* Optional: Enhance table appearance */
+        .data-table th, .data-table td {
+            padding: 12px;           /* Adds consistent padding */
+            vertical-align: middle;  /* Vertically centers the content */
+            border-bottom: 1px solid #dee2e6; /* Adds subtle bottom borders */
+        }
+
+        .data-table th {
+            background-color: #f8f9fa; /* Light grey background for headers */
+            font-weight: bold;          /* Bold text for headers */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Facade PV Potential</h1>
+
+        <!-- Images Section -->
+        <div class="row">
+            <div class="col-md-6 image-container text-center">
+                <h3>Original Image:</h3>
+                <img src="{{ url_for('static', filename='uploads/' + original_image) }}" alt="Original Image" class="img-fluid result-image">
+            </div>
+
+            <div class="col-md-6 image-container text-center">
+                <h3>PV Application Area:</h3>
+                <img src="{{ url_for('static', filename='uploads/' + unobstructed_image) }}" alt="PV Application Area" class="img-fluid result-image">
+            </div>
+        </div>
+
+
+        <div class="result-section">
+            <h2>Available Facade Area for PV Application</h2>
+            <p>Available facade ratio: <strong>{{ (unobstructed_ratio * 100) | round(2) }}%</strong></p>
+            <p>Available facade area: <strong>{{ unobstructed_facade_area | round(2) }} m²</strong></p>
+        </div>
+
+        {% if energy_yield is not none %}
+            <div class="result-section">
+                <h2>Potential Annual Energy Yield</h2>
+                <p>Based on the provided information, the estimated annual energy yield is:</p>
+                <p><strong>{{ energy_yield | round(2) }} kWh</strong></p>
+            </div>
+        {% else %}
+            <div class="result-section">
+                <h2>Energy Yield Calculation Failed</h2>
+                <p>There was an error calculating the energy yield. Please try again or contact support.</p>
+            </div>
+        {% endif %}
+
+        
+        <!-- Monthly Energy Output Graph -->
+        <div class="result-section">
+            <h2>Monthly Energy Output</h2>
+            {% if monthly_energy_plot %}
+                <div class="text-center">
+                    <img src="data:image/png;base64,{{ monthly_energy_plot }}" alt="Monthly Energy Output" class="img-fluid">
+                </div>
+            {% else %}
+                <p>Monthly energy output data is unavailable.</p>
+            {% endif %}
+        </div>
+
+        <!-- Irradiance Simulation Inputs -->
+        <div class="result-section">
+            <h2>Irradiance Inputs</h2>
+            {% if pvgis_data.simulation_inputs %}
+                <!-- Location Inputs -->
+                <h3>Location</h3>
+                <table class="table table-bordered data-table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Latitude</td>
+                            <td>{{ pvgis_data.simulation_inputs.location.latitude }}</td>
+                        </tr>
+                        <tr>
+                            <td>Longitude</td>
+                            <td>{{ pvgis_data.simulation_inputs.location.longitude }}</td>
+                        </tr>
+                        <tr>
+                            <td>Elevation</td>
+                            <td>{{ pvgis_data.simulation_inputs.location.elevation }} m</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- Meteo Data Inputs -->
+                <h3>Meteorological Data</h3>
+                <table class="table table-bordered data-table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Radiation Database</td>
+                            <td>{{ pvgis_data.simulation_inputs.meteo_data.radiation_db }}</td>
+                        </tr>
+                        <tr>
+                            <td>Meteo Database</td>
+                            <td>{{ pvgis_data.simulation_inputs.meteo_data.meteo_db }}</td>
+                        </tr>
+                        <tr>
+                            <td>Year Range</td>
+                            <td>{{ pvgis_data.simulation_inputs.meteo_data.year_min }} - {{ pvgis_data.simulation_inputs.meteo_data.year_max }}</td>
+                        </tr>
+                        <tr>
+                            <td>Use Horizon Shadows</td>
+                            <td>{{ 'Yes' if pvgis_data.simulation_inputs.meteo_data.use_horizon else 'No' }}</td>
+                        </tr>
+                        <tr>
+                            <td>Horizon Database</td>
+                            <td>{{ pvgis_data.simulation_inputs.meteo_data.horizon_db }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- Mounting System Inputs -->
+                <h3>Mounting System</h3>
+                <table class="table table-bordered data-table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Slope</td>
+                            <td>{{ pvgis_data.simulation_inputs.mounting_system.fixed.slope.value }}°</td>
+                        </tr>
+                        <tr>
+                            <td>Azimuth</td>
+                            <td>{{ pvgis_data.simulation_inputs.mounting_system.fixed.azimuth.value }}°</td>
+                        </tr>
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Irradiance inputs are unavailable.</p>
+            {% endif %}
+        </div>
+
+
+        <!-- User Provided Inputs -->
+        <div class="result-section">
+            <h2>User Inputs</h2>
+            <table class="table table-bordered data-table">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Selected Mask ID</td>
+                        <td>{{ selected_mask_id }}</td>
+                    </tr>
+                    <tr>
+                        <td>Facade Area</td>
+                        <td>{{ unobstructed_facade_area | round(2) }} m²</td>
+                    </tr>
+                    <tr>
+                        <td>Orientation</td>
+                        <td>{{ orientation }}</td>
+                    </tr>
+                    <tr>
+                        <td>PV Technology</td>
+                        <td>{{ pv_technology }}</td>
+                    </tr>
+                    <tr>
+                        <td>Location</td>
+                        <td>{{ location }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Button to Details Page -->
+        <div class="text-center">
+            <a href="#" onclick="window.history.back();" class="btn-home">Edit Inputs</a>
+        <div>
+        <div class="text-center">
+            <a href="/" class="btn btn-home">Upload Another Image</a>
+        </div>
+        <div class="text-center my-4"></div>
+            <a href="{{ url_for('details') }}" class="btn btn-home">Learn More About the Method</a>
+        </div>
+    </div>
+
+    <!-- Include Bootstrap JS and dependencies (optional for future use) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
