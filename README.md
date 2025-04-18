@@ -1,6 +1,6 @@
 # Segment4Solar
 
-Segment4Solar (v0.1) is a project focusing on the analysis and segmentation of facade imagery for solar applications. 
+Segment4Solar (v0.1) is a tool to analyze facade images for solar applications. 
 
 ## Instant BIPV Design using Street View Images
 
