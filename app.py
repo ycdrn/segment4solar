@@ -385,30 +385,6 @@ def create_unobstructed_wall_image(original_filename, unobstructed_wall_mask):
     return segmented_filename
 
 
-#def create_segmented_image(image_path, mask, original_filename):
-    """
-    Creates an image with the segmentation mask overlaid.
-    Saves the image and returns the filename.
-    """
-    print("Creating segmented image...")
-    image = Image.open(image_path).convert("RGBA")
-    mask_array = mask.astype(np.uint8) * 255  # Convert boolean mask to uint8
-
-    # Create an image from the mask
-    mask_image = Image.fromarray(mask_array, mode='L')
-
-    # Create a red overlay
-    red_overlay = Image.new("RGBA", image.size, (255, 0, 0, 100))  # Semi-transparent red
-
-    # Composite the overlay with the mask
-    segmented_image = Image.composite(red_overlay, image, mask_image)
-
-    segmented_filename = 'segmented_' + original_filename
-    segmented_image_path = os.path.join(app.config['UPLOAD_FOLDER'], segmented_filename)
-    segmented_image.save(segmented_image_path)
-    print("Segmented image created and saved.")
-    return segmented_filename
-
 
 
 def calculate_energy_yield(area, orientation, pv_technology, location):
